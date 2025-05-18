@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", (req, res) => {
+    console.log("Sending html");
     res.sendFile(path.join(__dirname, 'pages', 'index.html'), { headers: { 'Content-Type': 'text/html' } });
 });
 
