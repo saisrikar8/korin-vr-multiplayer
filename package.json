@@ -1,0 +1,24 @@
+{
+  "name": "korinvrmultiplayer",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/saisrikar8/korin-vr-multiplayer#readme",
+  "bugs": {
+    "url": "https://github.com/saisrikar8/korin-vr-multiplayer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saisrikar8/korin-vr-multiplayer.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "korinvrmultiplayer",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "path": "^0.12.7"
+  }
+}
