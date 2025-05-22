@@ -1,59 +1,77 @@
-let searchBar, submitButton;
-let steeringImage;
-let steeringWheel;
+// scripts.js
+let carModel;
+let car;
+let cam;
 
-var turn = 0;
+let steeringWheel;
+let canvas;
 
 function preload() {
-    steeringImage = loadImage("/assets/steering.png");
+    carModel = loadModel('assets/car/car_body.obj', true);
 }
 
 function setup() {
-    let cnv = createCanvas(windowWidth, windowHeight);
-    cnv.parent('canvas-container');
-    textAlign(LEFT, TOP);
-    textSize(16);
-
-    searchBar = createInput();
-    searchBar.position(10, 30);
-    searchBar.attribute("placeholder", "Search for a location...");
-    searchBar.style("position", "absolute");
-    searchBar.style("z-index", "10");
-    searchBar.style("padding", "8px");
-    searchBar.style("font-size", "16px");
-    searchBar.style("width", "220px");
-    searchBar.class("search-bar");  // optional if using custom CSS
-    searchBar.input(handleInput);
-
-
-    submitButton = createButton('Submit');
-    submitButton.position(250, 37);
-    submitButton.mousePressed(handleSubmit);
+    canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+    perspective(6 * PI/13, width / height, 0.1, 5000);
+    car = new Car(0, 0, carModel);
+    cam = createCamera();
 
     steeringWheel = new SteeringWheel();
+
+    canvas.elt.focus();
+
+    setCamera(cam);
 }
 
 function draw() {
-    if (turn > -270 && keyIsDown(LEFT_ARROW))turn-=3;
-    else if (turn < 270 && keyIsDown(RIGHT_ARROW))turn+=3;
-    else if (turn != 0){
-        turn += (turn > 0) ? -3 : 3;
+    background(135, 206, 235);
+
+    lights();
+    directionalLight(255, 255, 255, -0.5, -1, -0.5);
+
+    // Camera follow car with some height and offset
+    let camDist = 250;
+    let camHeight = 250;
+    let eyeX = car.pos.x + cos(car.angle) * camDist;
+    let eyeY = camHeight;
+    let eyeZ = car.pos.y + sin(car.angle) * camDist;
+    cam.setPosition(eyeX, eyeY, eyeZ);
+    cam.lookAt(car.pos.x, 0, car.pos.y);
+
+    // Draw ground plane
+    push();
+    rotateX(HALF_PI);
+    noStroke();
+    fill(34, 139, 34);
+    plane(3000, 3000);
+    pop();
+
+    // Optional grid for reference
+    push();
+    stroke(180);
+    strokeWeight(1);
+    noFill();
+    rotateX(HALF_PI);
+    for(let i = -500; i <= 500; i += 50) {
+        line(i, -500, i, 500);
+        line(-500, i, 500, i);
     }
+    pop();
 
-    steeringWheel.rotateSteeringWheel(turn);
+    // Update and draw car
+    car.update();
+    car.render();
 
-    background(240);
+    // Speedometer, HUD, etc.
+    setHUD();
 }
 
-function handleSubmit() {
-    let name = searchBar.value();
-    console.log(`Name: ${name}`);
+
+function setHUD() {
+    resetMatrix();
+    applyMatrix(...canvas.uMVMatrix.mat4);
+    camera();
+    ortho();
+    translate(-width / 2, -height / 2);
 }
 
-function handleInput(){}
-
-
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-    steeringWheel.resetPosition()
-}

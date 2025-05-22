@@ -2,9 +2,7 @@
 <html>
     <head>
         <title>Multiplayer Korin</title>
-        <script src = "p5/p5.js"></script>
-        <script src = "p5/p5.min.js"></script>
-        <script src = "SteeringWheel.js"></script>
+
     </head>
     <body style = "width:100vw; height:100vh; overflow:hidden;">
         <div id = "canvas-container" style = "position:relative"></div>
@@ -28,6 +26,18 @@
                 border: none;
             }
         </style>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            const socket = io(); // Connects to the server that served the page
+
+            socket.on('connect', () => {
+                console.log('Connected to server as', socket.id);
+            });
+        </script>
+        <script src = "p5/p5.js"></script>
+        <script src = "p5/p5.min.js"></script>
+        <script src="/car.js"></script>
+        <script src = "SteeringWheel.js"></script>
         <script src = "scripts.js"></script>
 
     </body>
