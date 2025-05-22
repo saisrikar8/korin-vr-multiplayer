@@ -64,6 +64,7 @@ function draw() {
 
     // Speedometer, HUD, etc.
     setHUD();
+    steeringWheel.rotateSteeringWheel((180/PI)*car.angle);
 }
 
 
