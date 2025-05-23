@@ -2,6 +2,7 @@
 let carModel;
 let car;
 let cam;
+let camPos, camTarget;
 
 let steeringWheel;
 let canvas;
@@ -15,6 +16,9 @@ function setup() {
     perspective(6 * PI/13, width / height, 0.1, 5000);
     car = new Car(0, 0, carModel);
     cam = createCamera();
+    camPos = createVector(0, 0, 0);
+    camTarget = createVector(0, 0, 0);
+
 
     steeringWheel = new SteeringWheel();
 
@@ -30,13 +34,22 @@ function draw() {
     directionalLight(255, 255, 255, -0.5, -1, -0.5);
 
     // Camera follow car with some height and offset
-    let camDist = 250;
-    let camHeight = 250;
-    let eyeX = car.pos.x + cos(car.angle) * camDist;
-    let eyeY = camHeight;
-    let eyeZ = car.pos.y + sin(car.angle) * camDist;
-    cam.setPosition(eyeX, eyeY, eyeZ);
-    cam.lookAt(car.pos.x, 0, car.pos.y);
+    // Offset behind the car
+    let camOffset = p5.Vector.fromAngle(car.angle + PI).mult(200);
+    camOffset.y = 180; // raise the camera height (was 150)
+
+    // Where the camera should look
+    let desiredCamPos = p5.Vector.add(car.pos, camOffset);
+    let desiredTarget = p5.Vector.add(car.pos, createVector(0, 70, 0)); // aim higher on the car
+
+    // Smooth follow
+    camPos.lerp(desiredCamPos, 0.05);
+    camTarget.lerp(desiredTarget, 0.05);
+
+    // Set the camera
+    camera(camPos.x, camPos.y, camPos.z, camTarget.x, camTarget.y, camTarget.z, 0, 1, 0);
+
+
 
     // Draw ground plane
     push();
@@ -64,7 +77,7 @@ function draw() {
 
     // Speedometer, HUD, etc.
     setHUD();
-    steeringWheel.rotateSteeringWheel((180/PI)*car.angle);
+    steeringWheel.rotateSteeringWheel(car.steeringWheelAngle);
 }
 
 
